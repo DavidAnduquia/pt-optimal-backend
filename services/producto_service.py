@@ -1,11 +1,14 @@
 from typing import List
-from fastapi import HTTPException 
+from fastapi import HTTPException
+import pytz 
 from models.producto_item import Producto, ProductoModel
 from database.database import SessionLocal
 from datetime import datetime
 from decorators.exception_handler import service_exception_handler
  
 class ProductoService:
+
+    colombia_timezone = pytz.timezone("America/Bogota")
 
     def __init__(self) -> None:
         self.db = SessionLocal()
@@ -29,7 +32,7 @@ class ProductoService:
         # Valida campo vacio
         if not producto.name.strip():
             raise HTTPException(status_code=404, detail="El nombre no puede estar vació.")
-        producto.date_created = str(datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+        producto.date_created = str(datetime.now(self.colombia_timezone).strftime("%d/%m/%Y %H:%M:%S"))
         producto.status = "A" # Asignacion de campo
         new_producto = Producto(**producto.model_dump())
         self.db.add(new_producto)
@@ -48,7 +51,7 @@ class ProductoService:
             # Valida campo vacio
             if not usuario_param.name.strip():
                 raise HTTPException(status_code=404, detail="El nombre no puede estar vació.")
-            update_data['date_modified'] = datetime.now().strftime("%d/%m/%Y %H:%M:%S") # Nueva fecha con formato
+            update_data['date_modified'] = datetime.now(self.colombia_timezone).strftime("%d/%m/%Y %H:%M:%S") # Nueva fecha con formato
             producto.update(dict(**update_data))
             self.db.commit()
             return self.db.query(Producto).filter(Producto.id == usuario_param.id).first()
@@ -60,7 +63,7 @@ class ProductoService:
             producto_data = ProductoModel.model_validate(item.first())
             update_data = producto_data.model_dump() 
             update_data['status'] = "I" # Marcar como Inactivo
-            update_data['date_modified'] = datetime.now().strftime("%d/%m/%Y %H:%M:%S") # Nueva fecha con formato
+            update_data['date_modified'] = datetime.now(self.colombia_timezone).strftime("%d/%m/%Y %H:%M:%S") # Nueva fecha con formato
             item.update(dict(**update_data))
             self.db.commit()
             return item.first()
