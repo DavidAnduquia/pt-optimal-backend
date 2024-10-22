@@ -22,7 +22,8 @@ main.py
 requirements.txt
 ```
 
-#  Modelo de base de datos
+#  Modelo de base de datos 
+   Sqlite
    ```
    CREATE TABLE "producto" (
       "id"	INTEGER UNIQUE,
@@ -31,6 +32,16 @@ requirements.txt
       "date_modified"	TEXT,
       "status"	NUMERIC NOT NULL,
       PRIMARY KEY("id" AUTOINCREMENT)
+   )
+   ```
+   Postgresql
+   ```
+   CREATE TABLE producto (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR NOT NULL,
+    date_created VARCHAR NOT NULL,
+    date_modified VARCHAR,
+    status VARCHAR NOT NULL
    )
    ```
 ##  Instalación y Configuración local
